@@ -11,7 +11,7 @@ from api.v1.views import app_views
 from models.review import Review
 from models.place import Place
 from models.user import User
-from models import storage, storage_t
+from models import storage
 
 
 @app_views.route('/places/<place_id>/reviews', methods=['GET'])
@@ -41,12 +41,14 @@ def get_review(review_id=None):
 @app_views.route('/reviews/<review_id>', methods=['DELETE'])
 def remove_review(review_id=None):
     """A function to delete review object."""
-    review = storage.get(Review, review_id)
-    if review:
-        storage.delete(review)
-        storage.save()
-        return jsonify({}), 200
-    return abort(404)
+    if review_id:
+        review = storage.get(Review, review_id)
+        if review:
+            storage.delete(review)
+            storage.save()
+            return (jsonify({}), 200)
+        else:
+            abort(404)
 
 
 @app_views.route('/places/<place_id>/reviews', methods=['POST'])
@@ -69,7 +71,7 @@ def add_review(place_id=None):
         abort(400, 'Missing text')
 
     # If place id is available and linked to place save it's review
-    data[place_id] = place_id
+    data['place_id'] = place_id
     new_review = Review(**data)
     new_review.save()
     # Return the new review with status code 201
@@ -92,5 +94,5 @@ def update_review(review_id=None):
                     setattr(review, key, value)
             review.save()
             return jsonify(review.to_dict()), 200
-    else:
-        abort(404)
+        else:
+            abort(404)
