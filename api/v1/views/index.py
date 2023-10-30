@@ -12,13 +12,13 @@ from models.state import State
 from models.user import User
 
 
-@app_views.route('/status', strict_slashes=False)
+@app_views.route('/status', methods=['GET'])
 def get_status():
     """This is the status of the api"""
     return jsonify({'status': 'OK'})
 
 
-@app_views.route('/stats', strict_slashes=False)
+@app_views.route('/stats', methods=['GET'])
 def get_stats():
     """Gets the stats of all objects"""
     obj = {
