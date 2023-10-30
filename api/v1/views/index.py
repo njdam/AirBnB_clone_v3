@@ -35,4 +35,4 @@ def get_stats():
     objects_count = {}
     for key in objects:
         objects_count[key] = storage.count(objects[key])
-        return (jsonify(objects_count))
+    return (jsonify(objects_count))
