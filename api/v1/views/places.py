@@ -4,8 +4,8 @@ all default RESTFul API actions
 """
 
 # Importing modules from system files
-from flask import request, jsonify
-from werkzeug.exceptions import MethodNotAllowed, NotFound, BadRequest
+from flask import request, jsonify, abort
+from werkzeug.exceptions import MethodNotAllowed
 
 # Importing modules from project files
 from api.v1.views import app_views
@@ -51,7 +51,7 @@ def get_places(city_id=None, place_id=None):
         if place:
             return (jsonify(place.to_dict()))
     else:
-        raise NotFound()
+        abort(404)
 
 
 def remove_place(city_id=None, place_id=None):
@@ -63,57 +63,44 @@ def remove_place(city_id=None, place_id=None):
             storage.save()
             return (jsonify({}), 200)
         else:
-            raise NotFound()
+            abort(404)
 
 
 def add_place(city_id=None, place_id=None):
     """A function to add a place object."""
     city = storage.get(City, city_id)
     if not city:
-        raise NotFound()
+        raise abort(404)
     data = request.get_json()
     if type(data) is not dict:
-        raise BadRequest(description='Not a JSON')
+        abort(400, 'Not a JSON')
     if 'user_id' not in data:
-        raise BadRequest(description='Missing user_id')
+        abort(400, 'Missing user_id')
 
     user = storage.get(User, data['user_id'])
     if not user:
-        raise NotFound()
+        abort(404)
     if 'name' not in data:
-        raise BadRequest(description='Missing name')
+        abort(400, 'Missing name')
 
     # If city id is available and linked to city save it in place
-    all_cities = storage.all("City").values()
-    city_obj = [obj.to_dict() for obj in all_cities
-                if obj.id == city_id]
-    if city_obj == []:
-        raise NotFound()
-    places = []
-    new_place = Place(name=request.json['name'],
-                      user_id=request.json['user_id'], city_id=city_id)
-    all_users = storage.all("User").values()
-    user_obj = [obj.to_dict() for obj in all_users
-                if obj.id == new_place.user_id]
-    if user_obj == []:
-        raise NotFound()
-    storage.new(new_place)
-    storage.save()
-    places.append(new_place.to_dict())
+    data['city_id'] = city_id
+    new_place = Place(**data)
+    new_place.save()
     # Returning new place with status code 201
-    return jsonify(places[0]), 201
+    return jsonify(new_place.to_dict()), 201
 
 
 def update_place(city_id=None, place_id=None):
     """A function that update the place object."""
     place = storage.get(Place, place_id)
     if not place:
-        raise NotFound()
+        abort(404)
 
     ignored_keys = ('id', 'user_id', 'city_id', 'created_at', 'updated_at')
     data = request.get_json()
     if type(data) is not dict:
-        raise BadRequest(discription='Not a JSON')
+        abort(400, 'Not a JSON')
     for key, value in data.items():
         if key not in ignored_keys:
             setattr(place, key, value)
