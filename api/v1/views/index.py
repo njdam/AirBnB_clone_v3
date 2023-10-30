@@ -32,6 +32,14 @@ def get_status():
 @app_views.route('/stats', methods=['GET'])
 def get_stats():
     '''Gets the stats of all objects'''
+    objects = {
+            'amenities': Amenity,
+            'cities': City,
+            'places': Place,
+            'reviews': Review,
+            'states': State,
+            'users': User
+            }
     objects_count = {}
     for key in objects:
         objects_count[key] = storage.count(objects[key])
