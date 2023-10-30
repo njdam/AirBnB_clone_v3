@@ -1,6 +1,5 @@
 #!/usr/bin/python3
 """THis is the index page view"""
-
 from api.v1.views import app_views
 from flask import jsonify
 from models import storage
@@ -11,7 +10,11 @@ from models.city import City
 from models.amenity import Amenity
 from models.review import Review
 
-"""
+classes = {"users": "User", "places": "Place", "states": "State",
+           "cities": "City", "amenities": "Amenity",
+           "reviews": "Review"}
+
+
 # For Task 3. Status of your API
 @app_views.route('/status', methods=['GET'])
 def get_status():
@@ -21,36 +24,8 @@ def get_status():
 
 # For Task 4. Some stats?
 @app_views.route('/stats', methods=['GET'])
-def get_stats():
-    '''Gets the stats of all objects'''
-    objects = {
-            'amenities': Amenity,
-            'cities': City,
-            'places': Place,
-            'reviews': Review,
-            'states': State,
-            'users': User
-            }
-    objects_count = {}
-    for key in objects:
-        objects_count[key] = storage.count(objects[key])
-    return (jsonify(objects_count))
-"""
-
-classes = {"users": "User", "places": "Place", "states": "State",
-           "cities": "City", "amenities": "Amenity",
-           "reviews": "Review"}
-
-
-@app_views.route('/status', methods=['GET'])
-def status():
-    ''' getting status'''
-    return jsonify({'status': 'OK'})
-
-
-@app_views.route('/stats', methods=['GET'])
 def count():
-    '''getting number of each objects by type'''
+    '''Getting number of each objects by type.'''
     count_dict = {}
     for cls in classes:
         count_dict[cls] = storage.count(classes[cls])
