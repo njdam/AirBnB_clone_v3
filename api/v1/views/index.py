@@ -22,12 +22,12 @@ def get_status():
 def get_stats():
     """Gets the stats of all objects"""
     obj = {
-            'amenities': Amenity,
-            'cities': City,
-            'places': Place,
-            'reviews': Review,
-            'states': State,
-            'users': User
+            "amenities": "Amenity",
+            "cities": "City",
+            "places": "Place",
+            "reviews": "Review",
+            "states": "State",
+            "users": "User"
             }
     obj_counts = {}
     for key, value in obj.items():
