@@ -29,12 +29,13 @@ def places_handler(city_id=None, place_id=None):
         return handlers[request.method](city_id, place_id)
     else:
         return MethodNotAllowed(list(handlers.keys()))
+'''
 
 
 @app_views.route('/cities/<city_id>/places', methods=['GET'])
 @app_views.route('/cities/<city_id>/places/', methods=['GET'])
 def list_places_of_city(city_id):
-    """A function to list all Places objects in city"""
+    """A function to list all Places' objects in city"""
     all_cities = storage.all("City").values()
     city_obj = [obj.to_dict() for obj in all_cities if obj.id == city_id]
     if city_obj == []:
@@ -42,7 +43,6 @@ def list_places_of_city(city_id):
     list_places = [obj.to_dict() for obj in storage.all("Place").values()
                    if city_id == obj.city_id]
     return jsonify(list_places)
-'''
 
 
 @app_views.route('/places/<place_id>', methods=['GET'])
