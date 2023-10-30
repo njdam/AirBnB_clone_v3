@@ -1,17 +1,17 @@
 #!/usr/bin/python3
 """THis is the index page view"""
-"""
-from flask import jsonify
+
 from api.v1.views import app_views
+from flask import jsonify
 from models import storage
-from models.amenity import Amenity
-from models.city import City
-from models.place import Place
-from models.review import Review
-from models.state import State
 from models.user import User
+from models.place import Place
+from models.state import State
+from models.city import City
+from models.amenity import Amenity
+from models.review import Review
 
-
+"""
 # For Task 3. Status of your API
 @app_views.route('/status', methods=['GET'])
 def get_status():
@@ -36,15 +36,6 @@ def get_stats():
         objects_count[key] = storage.count(objects[key])
     return (jsonify(objects_count))
 """
-from api.v1.views import app_views
-from flask import jsonify
-from models import storage
-from models.user import User
-from models.place import Place
-from models.state import State
-from models.city import City
-from models.amenity import Amenity
-from models.review import Review
 
 classes = {"users": "User", "places": "Place", "states": "State",
            "cities": "City", "amenities": "Amenity",
