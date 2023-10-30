@@ -40,7 +40,7 @@ def delete_amentiy_by_id(amenity_id):
                  strict_slashes=False)
 def create_amenity():
     """creates an amenity object"""
-    if request.get_json() is None:
+    if not request.get_json(silent=True):
         return make_response(jsonify({"error": "Not a JSON"}), 400)
     if "name" not in request.get_json():
         return make_response(jsonify({"error": "Missing name"}), 400)
@@ -56,7 +56,7 @@ def update_amenity_by_id(amenity_id):
     amen = storage.get(Amenity, amenity_id)
     if amen is None:
         abort(404)
-    if request.get_json() is None:
+    if not request.get_json(silent=True):
         return make_response(jsonify({"error": "Not a JSON"}), 400)
     for key, value in request.get_json().items():
         if key not in ['id', 'created_at', 'updated_at']:
