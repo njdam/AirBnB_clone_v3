@@ -87,17 +87,18 @@ def add_review(place_id=None, review_id=None):
 
 def update_review(place_id=None, review_id=None):
     """A function to update review object."""
-    if not review_id:
-        raise NotFound()
-
-    data = request.get_json()
-    if type(data) is not dict:
-        raise BadRequest(discription='Not a JSON')
-
     ignored_keys = ('id', 'user_id', 'place_id', 'created_at', 'updated_at')
-    review = storage.get(Review, review_id)
-    for key, value in data.items():
-        if key not in ignored_keys:
-            setattr(review, key, value)
-        review.save()
-        return jsonify(review.to_dict()), 200
+
+    if review_id:
+        review = storage.get(Review, review_id)
+        if review:
+            data = request.get_json()
+            if type(data) is not dict:
+                raise BadRequest(discription='Not a JSON')
+            for key, value in data.items():
+                if key not in ignored_keys:
+                    setattr(review, key, value)
+            review.save()
+            return jsonify(review.to_dict()), 200
+
+    raise NotFound()
