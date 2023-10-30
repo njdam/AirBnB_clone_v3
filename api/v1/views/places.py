@@ -14,26 +14,9 @@ from models.city import City
 from models.user import User
 from models import storage, storage_t
 
-'''
-@app_views.route('/cities/<city_id>/places', methods=['GET', 'POST'])
-@app_views.route('/places/<place_id>', methods=['GET', 'DELETE', 'PUT'])
-def places_handler(city_id=None, place_id=None):
-    """A function to handle places' endpoint"""
-    handlers = {
-            'GET': get_places,
-            'POST': add_place,
-            'DELETE': remove_place,
-            'PUT': update_place
-            }
-    if request.method in handlers:
-        return handlers[request.method](city_id, place_id)
-    else:
-        return MethodNotAllowed(list(handlers.keys()))
-'''
-
 
 @app_views.route('/cities/<city_id>/places', methods=['GET'])
-def list_places_of_city(city_id=None):
+def get_places_of_city(city_id=None):
     """A function to list all Places' objects in city"""
     all_cities = storage.all("City").values()
     city_obj = [obj.to_dict() for obj in all_cities if obj.id == city_id]
@@ -45,36 +28,13 @@ def list_places_of_city(city_id=None):
 
 
 @app_views.route('/places/<place_id>', methods=['GET'])
-def get_places(place_id=None):
+def get_place(place_id=None):
     """A function to retrieve list of all place objects of a city."""
     all_places = storage.all("Place").values()
     place_obj = [obj.to_dict() for obj in all_places if obj.id == place_id]
     if place_obj == []:
         abort(404)
     return jsonify(place_obj[0])
-
-
-'''
-    if city_id:
-        city = storage.get(City, city_id)
-        if city:
-            all_places = []
-            if storage_t == 'db':
-                all_places = list(city.places)
-            else:
-                all_places = list(filter(
-                    lambda x: x.city_id == city_id,
-                    storage.all(Place).values()))
-            places = list(map(lambda x: x.to_dict(), all_places))
-            return (jsonify(places))
-
-    elif place_id:
-        place = storage.get(Place, place_id)
-        if place:
-            return (jsonify(place.to_dict()))
-    else:
-        abort(404)
-'''
 
 
 @app_views.route('/places/<place_id>', methods=['DELETE'])
