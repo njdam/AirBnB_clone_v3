@@ -15,6 +15,7 @@ from models.user import User
 from models import storage, storage_t
 
 
+'''
 @app_views.route('/places/<place_id>/reviews', methods=['GET', 'POST'])
 @app_views.route('/reviews/<review_id>', methods=['GET', 'DELETE', 'POST'])
 def reviews_handler(place_id=None, review_id=None):
@@ -29,9 +30,25 @@ def reviews_handler(place_id=None, review_id=None):
         return handlers[request.method](place_id=None, review_id=None)
     else:
         return MethodNotAllowed(list(handlers.keys()))
+'''
+
+@app_views.route('/places/<place_id>/reviews', methods=['GET'])
+@app_views.route('/places/<place_id>/reviews/', methods=['GET'])
+def list_reviews_of_place(place_id):
+    """A function to retrieve a list of all Review objects of a Place."""
+    all_places = storage.all("Place").values()
+
+    place_obj = [obj.to_dict() for obj in all_places if obj.id == place_id]
+    if place_obj == []:
+        raise NotFound()
+
+    reviews = [obj.to_dict() for obj in storage.all("Review").values()
+                    if place_id == obj.place_id]
+    return jsonify(reviews)
 
 
-def get_reviews(place_id=None, review_id=None):
+@app_views.route('/reviews/<review_id>', methods=['GET'])
+def get_reviews(review_id):
     """A function to retrieve list of all Review object."""
     if place_id:
         place = storage.get(Place, place_id)
@@ -49,7 +66,8 @@ def get_reviews(place_id=None, review_id=None):
     return NotFound()
 
 
-def remove_review(place_id=None, review_id=None):
+@app_views.route('/reviews/<review_id>', methods=['DELETE'])
+def remove_review(review_id):
     """A function to delete review object."""
     review = storage.get(Review, review_id)
     if review:
@@ -59,7 +77,8 @@ def remove_review(place_id=None, review_id=None):
     return NotFound()
 
 
-def add_review(place_id=None, review_id=None):
+@app_views.route('/places/<place_id>/reviews', methods=['POST'])
+def add_review(place_id):
     """A function to add review object."""
     place = storage.get(Place, place_id)
     if not place:
@@ -85,7 +104,8 @@ def add_review(place_id=None, review_id=None):
     return jsonify(new_review.to_dict()), 201
 
 
-def update_review(place_id=None, review_id=None):
+@app_views.route('/reviews/<review_id>', methods=['PUT'])
+def update_review(review_id):
     """A function to update review object."""
     ignored_keys = ('id', 'user_id', 'place_id', 'created_at', 'updated_at')
 
