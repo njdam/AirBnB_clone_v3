@@ -23,8 +23,10 @@ def get_reviews_of_place(place_id=None):
     if place_obj == []:
         abort(404)
 
-    reviews = [obj.to_dict() for obj in storage.all("Review").values()
-                    if place_id == obj.place_id]
+    reviews = [
+            obj.to_dict() for obj in storage.all(
+                "Review").values() if place_id == obj.place_id
+            ]
     return jsonify(reviews)
 
 
@@ -81,18 +83,17 @@ def add_review(place_id=None):
 @app_views.route('/reviews/<review_id>', methods=['PUT'])
 def update_review(review_id=None):
     """A function to update review object."""
-    ignored_keys = ('id', 'user_id', 'place_id', 'created_at', 'updated_at')
+    review = storage.get(Review, review_id)
+    if review:
+        abort(404)
 
-    if review_id:
-        review = storage.get(Review, review_id)
-        if review:
-            data = request.get_json()
-            if type(data) is not dict:
-                abort(400, 'Not a JSON')
-            for key, value in data.items():
-                if key not in ignored_keys:
-                    setattr(review, key, value)
-            review.save()
-            return jsonify(review.to_dict()), 200
-        else:
-            abort(404)
+    ignored_keys = ('id', 'user_id', 'place_id', 'created_at', 'updated_at')
+    data = request.get_json()
+    if type(data) is not dict:
+        abort(400, 'Not a JSON')
+    for key, value in data.items():
+        if key not in ignored_keys:
+            setattr(review, key, value)
+    review.save()
+
+    return jsonify(review.to_dict()), 200
