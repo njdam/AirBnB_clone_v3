@@ -33,7 +33,7 @@ def places_handler(city_id=None, place_id=None):
 
 
 @app_views.route('/cities/<city_id>/places', methods=['GET'])
-def list_places_of_city(city_id):
+def list_places_of_city(city_id=None):
     """A function to list all Places' objects in city"""
     all_cities = storage.all("City").values()
     city_obj = [obj.to_dict() for obj in all_cities if obj.id == city_id]
@@ -45,7 +45,7 @@ def list_places_of_city(city_id):
 
 
 @app_views.route('/places/<place_id>', methods=['GET'])
-def get_places(city_id, place_id):
+def get_places(city_id=None, place_id=None):
     """A function to retrieve list of all place objects of a city."""
     if city_id:
         city = storage.get(City, city_id)
@@ -69,7 +69,7 @@ def get_places(city_id, place_id):
 
 
 @app_views.route('/places/<place_id>', methods=['DELETE'])
-def remove_place(place_id):
+def remove_place(place_id=None):
     """A function to delete the place object."""
     if place_id:
         place = storage.get(Place, place_id)
@@ -82,7 +82,7 @@ def remove_place(place_id):
 
 
 @app_views.route('/cities/<city_id>/places', methods=['POST'])
-def add_place(city_id):
+def add_place(city_id=None):
     """A function to add a place object."""
     city = storage.get(City, city_id)
     if not city:
@@ -108,7 +108,7 @@ def add_place(city_id):
 
 
 @app_views.route('/places/<place_id>', methods=['PUT'])
-def update_place(place_id):
+def update_place(place_id=None):
     """A function that update the place object."""
     place = storage.get(Place, place_id)
     if not place:
