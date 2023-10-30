@@ -45,8 +45,16 @@ def list_places_of_city(city_id=None):
 
 
 @app_views.route('/places/<place_id>', methods=['GET'])
-def get_places(city_id=None, place_id=None):
+def get_places(place_id=None):
     """A function to retrieve list of all place objects of a city."""
+    all_places = storage.all("Place").values()
+    place_obj = [obj.to_dict() for obj in all_places if obj.id == place_id]
+    if place_obj == []:
+        abort(404)
+    return jsonify(place_obj[0])
+
+
+'''
     if city_id:
         city = storage.get(City, city_id)
         if city:
@@ -66,6 +74,7 @@ def get_places(city_id=None, place_id=None):
             return (jsonify(place.to_dict()))
     else:
         abort(404)
+'''
 
 
 @app_views.route('/places/<place_id>', methods=['DELETE'])
