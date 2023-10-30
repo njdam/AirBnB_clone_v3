@@ -15,6 +15,7 @@ from models.user import User
 from models import storage, storage_t
 
 
+'''
 @app_views.route('/cities/<city_id>/places', methods=['GET', 'POST'])
 @app_views.route('/places/<place_id>', methods=['GET', 'DELETE', 'PUT'])
 def places_handler(city_id=None, place_id=None):
@@ -29,9 +30,24 @@ def places_handler(city_id=None, place_id=None):
         return handlers[request.method](city_id, place_id)
     else:
         return MethodNotAllowed(list(handlers.keys()))
+'''
 
 
-def get_places(city_id=None, place_id=None):
+@app_views.route('/cities/<city_id>/places', methods=['GET'])
+@app_views.route('/cities/<city_id>/places/', methods=['GET'])
+def list_places_of_city(city_id):
+    '''A function to list all Places' objects in city'''
+    all_cities = storage.all("City").values()
+    city_obj = [obj.to_dict() for obj in all_cities if obj.id == city_id]
+    if city_obj == []:
+        abort(404)
+    list_places = [obj.to_dict() for obj in storage.all("Place").values()
+                   if city_id == obj.city_id]
+    return jsonify(list_places)
+
+
+@app_views.route('/places/<place_id>', methods=['GET'])
+def get_places(city_id, place_id):
     """A function to retrieve list of all place objects of a city."""
     if city_id:
         city = storage.get(City, city_id)
@@ -54,7 +70,8 @@ def get_places(city_id=None, place_id=None):
         abort(404)
 
 
-def remove_place(city_id=None, place_id=None):
+@app_views.route('/places/<place_id>', methods=['DELETE'])
+def remove_place(place_id):
     """A function to delete the place object."""
     if place_id:
         place = storage.get(Place, place_id)
@@ -66,7 +83,8 @@ def remove_place(city_id=None, place_id=None):
             abort(404)
 
 
-def add_place(city_id=None, place_id=None):
+@app_views.route('/cities/<city_id>/places', methods=['POST'])
+def add_place(city_id):
     """A function to add a place object."""
     city = storage.get(City, city_id)
     if not city:
@@ -91,7 +109,8 @@ def add_place(city_id=None, place_id=None):
     return jsonify(new_place.to_dict()), 201
 
 
-def update_place(city_id=None, place_id=None):
+@app_views.route('/places/<place_id>', methods=['PUT'])
+def update_place(place_id):
     """A function that update the place object."""
     place = storage.get(Place, place_id)
     if not place:
