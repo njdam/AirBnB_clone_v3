@@ -84,11 +84,24 @@ def add_place(city_id=None, place_id=None):
         raise BadRequest(description='Missing name')
 
     # If city id is available and linked to city save it in place
-    data['city_id'] = city_id
-    new_place = Place(**data)
-    new_place.save()
+    all_cities = storage.all("City").values()
+    city_obj = [obj.to_dict() for obj in all_cities
+                if obj.id == city_id]
+    if city_obj == []:
+        raise NotFound()
+    places = []
+    new_place = Place(name=request.json['name'],
+                      user_id=request.json['user_id'], city_id=city_id)
+    all_users = storage.all("User").values()
+    user_obj = [obj.to_dict() for obj in all_users
+                if obj.id == new_place.user_id]
+    if user_obj == []:
+        raise NotFound()
+    storage.new(new_place)
+    storage.save()
+    places.append(new_place.to_dict())
     # Returning new place with status code 201
-    return jsonify(new_place.to_dict()), 201
+    return jsonify(places[0]), 201
 
 
 def update_place(city_id=None, place_id=None):
