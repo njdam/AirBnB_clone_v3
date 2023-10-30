@@ -34,7 +34,7 @@ def places_handler(city_id=None, place_id=None):
 @app_views.route('/cities/<city_id>/places', methods=['GET'])
 @app_views.route('/cities/<city_id>/places/', methods=['GET'])
 def list_places_of_city(city_id):
-    '''A function to list all Places' objects in city"""
+    """A function to list all Places objects in city"""
     all_cities = storage.all("City").values()
     city_obj = [obj.to_dict() for obj in all_cities if obj.id == city_id]
     if city_obj == []:
