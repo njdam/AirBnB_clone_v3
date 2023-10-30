@@ -12,24 +12,25 @@ from models.state import State
 from models.user import User
 
 
+# For Task 3. Status of your API
 @app_views.route('/status', methods=['GET'])
 def get_status():
     """This is the status of the api"""
     return jsonify({'status': 'OK'})
 
 
+# For Task 4. Some stats?
 @app_views.route('/stats', methods=['GET'])
 def get_stats():
     """Gets the stats of all objects"""
-    obj = {
-            "amenities": "Amenity",
-            "cities": "City",
-            "places": "Place",
-            "reviews": "Review",
-            "states": "State",
-            "users": "User"
-            }
-    obj_counts = {}
-    for key, value in obj.items():
-        obj_counts[key] = storage.count(value)
-    return jsonify(obj_counts)
+    objects = {
+        'amenities': Amenity,
+        'cities': City,
+        'places': Place,
+        'reviews': Review,
+        'states': State,
+        'users': User
+    }
+    for key, value in objects.items():
+        objects[key] = storage.count(value)
+    return jsonify(objects)
