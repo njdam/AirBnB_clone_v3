@@ -5,14 +5,13 @@ all default RESTFul API actions
 
 # Importing modules from system files
 from flask import request, jsonify, abort
-from werkzeug.exceptions import MethodNotAllowed
 
 # Importing modules from project files
 from api.v1.views import app_views
 from models.place import Place
 from models.city import City
 from models.user import User
-from models import storage, storage_t
+from models import storage
 
 
 @app_views.route('/cities/<city_id>/places', methods=['GET'])
