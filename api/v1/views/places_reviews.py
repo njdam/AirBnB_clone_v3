@@ -4,8 +4,7 @@ all default RESTFul API actions
 """
 
 # Importing modules from system files
-from flask import request, jsonify
-from werkzeug.exceptions import MethodNotAllowed, NotFound, BadRequest
+from flask import request, jsonify, abort
 
 # Importing modules from project files
 from api.v1.views import app_views
@@ -15,32 +14,14 @@ from models.user import User
 from models import storage, storage_t
 
 
-'''
-@app_views.route('/places/<place_id>/reviews', methods=['GET', 'POST'])
-@app_views.route('/reviews/<review_id>', methods=['GET', 'DELETE', 'POST'])
-def reviews_handler(place_id=None, review_id=None):
-    """A function to handle reviews' methods."""
-    handlers = {
-            'GET': get_reviews,
-            'POST': add_review,
-            'DELETE': remove_review,
-            'PUT': update_review,
-            }
-    if request.method in handlers:
-        return handlers[request.method](place_id=None, review_id=None)
-    else:
-        return MethodNotAllowed(list(handlers.keys()))
-'''
-
 @app_views.route('/places/<place_id>/reviews', methods=['GET'])
-@app_views.route('/places/<place_id>/reviews/', methods=['GET'])
-def list_reviews_of_place(place_id):
+def get_reviews_of_place(place_id=None):
     """A function to retrieve a list of all Review objects of a Place."""
     all_places = storage.all("Place").values()
 
     place_obj = [obj.to_dict() for obj in all_places if obj.id == place_id]
     if place_obj == []:
-        raise NotFound()
+        abort(404)
 
     reviews = [obj.to_dict() for obj in storage.all("Review").values()
                     if place_id == obj.place_id]
@@ -48,53 +29,44 @@ def list_reviews_of_place(place_id):
 
 
 @app_views.route('/reviews/<review_id>', methods=['GET'])
-def get_reviews(review_id):
+def get_review(review_id=None):
     """A function to retrieve list of all Review object."""
-    if place_id:
-        place = storage.get(Place, place_id)
-        if place:
-            all_reviews = []
-            for review in place.reviews:
-                all_reviews.append(review.to_dict())
-            return jsonify(reviews)
-
-    elif review_id:
-        review = storage.get(Review, review_id)
-        if review:
-            return jsonify(review.to_dict())
-
-    return NotFound()
+    all_reviews = storage.all("Review").values()
+    obj = [obj.to_dict() for obj in all_reviews if obj.id == review_id]
+    if obj == []:
+        abort(404)
+    return jsonify(obj[0])
 
 
 @app_views.route('/reviews/<review_id>', methods=['DELETE'])
-def remove_review(review_id):
+def remove_review(review_id=None):
     """A function to delete review object."""
     review = storage.get(Review, review_id)
     if review:
         storage.delete(review)
         storage.save()
         return jsonify({}), 200
-    return NotFound()
+    return abort(404)
 
 
 @app_views.route('/places/<place_id>/reviews', methods=['POST'])
-def add_review(place_id):
+def add_review(place_id=None):
     """A function to add review object."""
     place = storage.get(Place, place_id)
     if not place:
-        raise NotFound()
+        abort(404)
 
     data = request.get_json()
     if type(data) is not dict:
-        raise BadRequest(discription='Not a JSON')
+        abort(400, 'Not a JSON')
     if 'user_id' not in data:
-        raise BadRequest(discription='Missing user_id')
+        abort(400, 'Missing user_id')
 
     user = storage.get(User, data['user_id'])
     if not user:
-        raise NotFound()
+        abort(404)
     if 'text' not in data:
-        raise BadRequest(discription='Missing text')
+        abort(400, 'Missing text')
 
     # If place id is available and linked to place save it's review
     data[place_id] = place_id
@@ -105,7 +77,7 @@ def add_review(place_id):
 
 
 @app_views.route('/reviews/<review_id>', methods=['PUT'])
-def update_review(review_id):
+def update_review(review_id=None):
     """A function to update review object."""
     ignored_keys = ('id', 'user_id', 'place_id', 'created_at', 'updated_at')
 
@@ -114,11 +86,11 @@ def update_review(review_id):
         if review:
             data = request.get_json()
             if type(data) is not dict:
-                raise BadRequest(discription='Not a JSON')
+                abort(400, 'Not a JSON')
             for key, value in data.items():
                 if key not in ignored_keys:
                     setattr(review, key, value)
             review.save()
             return jsonify(review.to_dict()), 200
-
-    raise NotFound()
+    else:
+        abort(404)
