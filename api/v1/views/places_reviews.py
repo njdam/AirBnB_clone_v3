@@ -23,8 +23,10 @@ def get_reviews_of_place(place_id=None):
     if place_obj == []:
         abort(404)
 
-    reviews = [obj.to_dict() for obj in storage.all("Review").values()
-                    if place_id == obj.place_id]
+    reviews = (
+            [obj.to_dict() for obj in storage.all("Review")
+                .values() if place_id == obj.place_id]
+            )
     return jsonify(reviews)
 
 
