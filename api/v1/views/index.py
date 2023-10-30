@@ -11,8 +11,14 @@ from models.review import Review
 from models.state import State
 from models.user import User
 
-objects = {'amenities': Amenity, 'cities': City, 'places': Place,
-        'reviews': Review, 'states': State, 'users': User}
+objects = {
+        'amenities': Amenity,
+        'cities': City,
+        'places': Place,
+        'reviews': Review,
+        'states': State,
+        'users': User
+        }
 
 
 # For Task 3. Status of your API
@@ -29,4 +35,4 @@ def get_stats():
     objects_count = {}
     for key in objects:
         objects_count[key] = storage.count(objects[key])
-    return jsonify(objects_count)
+        return (jsonify(objects_count))
