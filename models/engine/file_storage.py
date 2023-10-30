@@ -71,7 +71,7 @@ class FileStorage:
 
     def get(self, cls, id):
         """A function to retrieve one object of a given id."""
-        if cls is not None:
+        if cls is not None and issubclass(cls, BaseModel):
             objects = list(
                     filter(
                         lambda x: type(x) is cls and x.id == id,
@@ -80,7 +80,7 @@ class FileStorage:
                     )
             if objects:
                 return (objects[0])
-        return None
+        return (None)
 
     def count(self, cls=None):
         """A function that count number of objects in storage."""
