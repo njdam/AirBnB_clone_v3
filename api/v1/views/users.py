@@ -40,7 +40,7 @@ def delete_user_by_id(user_id=None):
                  strict_slashes=False)
 def create_user():
     """Creates a user"""
-    if not request.get_json(silent=True):
+    if type(request.get_json()) is not dict:
         return make_response(jsonify({"error": "Not a JSON"}), 400)
     if "email" not in request.get_json():
         return make_response(jsonify({"error": "Missing email"}), 400)
