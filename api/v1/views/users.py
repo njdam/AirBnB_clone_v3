@@ -41,11 +41,11 @@ def delete_user_by_id(user_id=None):
 def create_user():
     """Creates a user"""
     if type(request.get_json()) is not dict:
-        return make_response(jsonify({"error": "Not a JSON"}), 400)
+        abort(400, 'Not a JSON')
     if "email" not in request.get_json():
-        return make_response(jsonify({"error": "Missing email"}), 400)
+        abort(400, 'Missing email')
     if "password" not in request.get_json():
-        return make_response(jsonify({"error": "Missing password"}), 400)
+        abort(400, 'Missing password')
     user = User(**request.get_json())
     user.save()
     return jsonify(user.to_dict()), 201
@@ -59,7 +59,7 @@ def update_user_by_id(user_id=None):
     if user is None:
         abort(404)
     if not request.get_json(silent=True):
-        return make_response(jsonify({"error": "Not a JSON"}), 400)
+        abort(400, 'Not a JSON')
     for key, value in request.get_json().items():
         if key not in ['id', 'email', 'created_at', 'updated_at']:
             setattr(user, key, value)
