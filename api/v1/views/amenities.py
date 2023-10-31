@@ -16,7 +16,7 @@ def get_all_amenities():
 
 @app_views.route('/amenities/<string:amenity_id>',
                  methods=['GET'], strict_slashes=False)
-def get_amenity_by_id(amenity_id=None):
+def get_amenity_by_id(amenity_id):
     """GEt amenity by id"""
     amen = storage.get(Amenity, amenity_id)
     if amen is None:
@@ -26,7 +26,7 @@ def get_amenity_by_id(amenity_id=None):
 
 @app_views.route('/amenities/<string:amenity_id>',
                  methods=['DELETE'], strict_slashes=False)
-def delete_amentiy_by_id(amenity_id=None):
+def delete_amentiy_by_id(amenity_id):
     """Deletes amenity by id"""
     amen = storage.get(Amenity, amenity_id)
     if amen is None:
@@ -51,7 +51,7 @@ def create_amenity():
 
 @app_views.route('/amenities/<string:amenity_id>',
                  methods=['PUT'], strict_slashes=False)
-def update_amenity_by_id(amenity_id=None):
+def update_amenity_by_id(amenity_id):
     """Updates amenity object by id"""
     amen = storage.get(Amenity, amenity_id)
     if amen is None:
