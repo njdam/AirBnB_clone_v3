@@ -12,7 +12,7 @@ from models.review import Review
 from models.state import State
 from models.user import User
 
-
+"""
 @app_views.route('/status')
 def get_status():
     '''This is the status of the api
@@ -37,7 +37,6 @@ def get_stats():
     return jsonify(objects)
 
 
-"""
 # For Task 3. Status of your API
 @app_views.route('/status', methods=['GET'])
 def status():
@@ -54,3 +53,22 @@ def count():
         count_dict[cls] = storage.count(classes[cls])
     return jsonify(count_dict)
 """
+
+classes = {"users": "User", "places": "Place", "states": "State",
+           "cities": "City", "amenities": "Amenity",
+           "reviews": "Review"}
+
+
+@app_views.route('/status', methods=['GET'])
+def status():
+    ''' routes to status page '''
+    return jsonify({'status': 'OK'})
+
+
+@app_views.route('/stats', methods=['GET'])
+def count():
+    '''retrieves the number of each objects by type'''
+    count_dict = {}
+    for cls in classes:
+        count_dict[cls] = storage.count(classes[cls])
+    return jsonify(count_dict)
