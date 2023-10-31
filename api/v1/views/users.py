@@ -16,7 +16,7 @@ def get_all_users():
 
 @app_views.route('/users/<string:user_id>',
                  methods=['GET'], strict_slashes=False)
-def get_user_by_id(user_id):
+def get_user_by_id(user_id=None):
     """Gets a user by id"""
     user = storage.get(User, user_id)
     if user is None:
@@ -26,7 +26,7 @@ def get_user_by_id(user_id):
 
 @app_views.route('/users/<string:user_id>',
                  methods=['DELETE'], strict_slashes=False)
-def delete_user_by_id(user_id):
+def delete_user_by_id(user_id=None):
     """Deletes a user by id"""
     user = storage.get(User, user_id)
     if user is None:
@@ -53,7 +53,7 @@ def create_user():
 
 @app_views.route('/users/<string:user_id>',
                  methods=['PUT'], strict_slashes=False)
-def update_user_by_id(user_id):
+def update_user_by_id(user_id=None):
     """Updates a user by id"""
     user = storage.get(User, user_id)
     if user is None:
